@@ -27,6 +27,8 @@ idioma = descobrir_idioma()
 def baixar_audio(url, pasta_saida="downloads"):
     """Baixa o audio de um video ou short do youtube e retorna o caminho do arquivo"""
     try:
+        if not os.path.exists(pasta_saida):
+            os.makedirs(pasta_saida)
         yt = YouTube(url)
         audio_stream = yt.streams.filter(only_audio=True).first()
         file_path = audio_stream.download(output_path=pasta_saida)
