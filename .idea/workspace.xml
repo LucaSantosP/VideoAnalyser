@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="72a064be-5535-4ef8-95f8-37c93aa39136" name="Changes" comment="commit inicial">
+    <list default="true" id="72a064be-5535-4ef8-95f8-37c93aa39136" name="Changes" comment="troca de modelo local por remoto para melhor performance">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
     </list>
@@ -111,6 +111,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="commit inicial" />
-    <option name="LAST_COMMIT_MESSAGE" value="commit inicial" />
+    <MESSAGE value="troca de modelo local por remoto para melhor performance" />
+    <option name="LAST_COMMIT_MESSAGE" value="troca de modelo local por remoto para melhor performance" />
   </component>
 </project>

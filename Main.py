@@ -1,8 +1,14 @@
-import whisper
+import os
 import textwrap
+from dotenv import load_dotenv
 from pytubefix import YouTube
-from transformers import pipeline
+import google.generativeai as genai
 from pytubefix.exceptions import RegexMatchError, VideoUnavailable
+
+
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
+client = genai.configure(api_key=API_KEY)
 
 
 def baixar_audio(url, pasta_saida="downloads"):
@@ -10,9 +16,7 @@ def baixar_audio(url, pasta_saida="downloads"):
     try:
         yt = YouTube(url)
         audio_stream = yt.streams.filter(only_audio=True).first()
-        print(f"Baixando: {yt.title}")
         file_path = audio_stream.download(output_path=pasta_saida)
-        print("Download concluído com sucesso.")
         return file_path
     except RegexMatchError:
         raise ValueError("URL inválida. Verifique o link e tente novamente.")
@@ -22,21 +26,24 @@ def baixar_audio(url, pasta_saida="downloads"):
         raise RuntimeError(f"Ocorreu um erro inesperado: {erro}")
 
 
-def transcrever_audio(caminho_audio, modelo="base"):
-    """Transcreve um arquivo de audio usando modelo whisper."""
-    print("Carregando modelo Whisper...")
-    model= whisper.load_model(modelo)
-    print("Transcrevendo áudio, aguarde um momento...")
-    result = model.transcribe(caminho_audio)
-    return result["text"]
+def transcrever_audio(caminho_audio, modelo="gemini-2.5-flash"):
+    """Transcreve um audio m4a usando modelo gemini"""
+    with open(caminho_audio, "rb") as f:
+        audio_bytes = f.read()
+    resposta = genai.GenerativeModel(modelo).generate_content(
+        [
+            "Transcreva exatamente o audio abaixo para texto em portugues",
+            {"mime_type": "audio/m4a", "data": audio_bytes}
+        ]
+    )
+    return resposta.text
 
 
-def resumir_texto(texto, modelo="facebook/bart-large-cnn"):
-    """Cria um resumo no texto usando modelo Bart."""
-    print("Gerando Resumo...")
-    summarizer = pipeline("summarization", model=modelo)
-    summary = summarizer(texto, do_sample=False)[0]["summary_text"]
-    return summary
+def resumir_texto(texto, modelo="gemini-2.5-flash"):
+    """Recebe um texto e resumi usando modelo gemini"""
+    prompt = f"Resuma o seguinte texto de forma clara e objetiva: \n\n{texto}"
+    resposta = genai.GenerativeModel(modelo).generate_content([prompt])
+    return resposta.text
 
 
 def exibir_texto_formatado(texto, largura=80):
@@ -52,6 +59,7 @@ def main():
     while True:
         try:
             url = input('URL do vídeo: ').strip()
+            print("Resumindo vídeo...")
             caminho_audio = baixar_audio(url)
             texto_transcricao = transcrever_audio(caminho_audio)
             resumo = resumir_texto(texto_transcricao)
