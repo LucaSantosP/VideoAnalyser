@@ -21,7 +21,7 @@ def descobrir_idioma():
     return idioma[0]
 
 
-idioma = descobrir_idioma()
+IDIOMA = descobrir_idioma()
 
 
 def baixar_audio(url, pasta_saida="downloads"):
@@ -47,7 +47,7 @@ def transcrever_audio(caminho_audio, modelo="gemini-2.5-flash"):
         audio_bytes = f.read()
     resposta = genai.GenerativeModel(modelo).generate_content(
         [
-            f"Transcreva exatamente o audio abaixo para texto em tal idioma: {idioma}",
+            f"Transcreva exatamente o audio abaixo para texto em tal idioma: {IDIOMA}",
             {"mime_type": "audio/m4a", "data": audio_bytes}
         ]
     )
@@ -71,7 +71,7 @@ def main():
     print("Video Analyser".center(80))
     print('-'*80)
     print("Detecting Language...", end=" ")
-    print(idioma)
+    print(IDIOMA)
     while True:
         try:
             url = input('Video URL: ').strip()
@@ -79,7 +79,7 @@ def main():
             caminho_audio = baixar_audio(url)
             texto_transcricao = transcrever_audio(caminho_audio)
             resumo = resumir_texto(texto_transcricao)
-            print("\n" + f"Summary in {idioma}".center(80, "-"))
+            print("\n" + f"Summary in {IDIOMA}".center(80, "-"))
             print()
             exibir_texto_formatado(resumo)
             break
